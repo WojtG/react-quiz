@@ -5,6 +5,7 @@ import Loader from "./Loader";
 import Error from "./Error";
 import StartScreen from "./StartScreen";
 import Question from "./Question";
+import NextButton from "./NextButton";
 
 const initialState = {
   questions: [],
@@ -26,10 +27,9 @@ function reducer(state, action) {
     case "start":
       return { ...state, status: "active" };
     case "nextQuestion":
-      return { ...state, currIndex: state.currIndex + 1 };
+      return { ...state, currIndex: state.currIndex + 1, answer: null };
     case "newAnswer":
       const question = state.questions.at(state.currIndex);
-
       return {
         ...state,
         answer: action.payload,
@@ -77,15 +77,17 @@ function App() {
           <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Question
-            dispatch={dispatch}
-            answer={answer}
-            score={score}
-            currQuestion={questions.at(currIndex)}
-          />
+          <>
+            <Question
+              dispatch={dispatch}
+              answer={answer}
+              score={score}
+              currQuestion={questions.at(currIndex)}
+            />
+            {answer !== null && <NextButton dispatch={dispatch} />}
+          </>
         )}
       </Main>
-      <button onClick={() => dispatch({ type: "nextQuestion" })}>Next</button>
     </div>
   );
 }
