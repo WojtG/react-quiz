@@ -11,6 +11,8 @@ const initialState = {
   //'loading', 'error', 'ready', 'active', 'finished'
   status: "loading",
   currIndex: 0,
+  answer: null,
+  score: 0,
 };
 
 function reducer(state, action) {
@@ -25,16 +27,25 @@ function reducer(state, action) {
       return { ...state, status: "active" };
     case "nextQuestion":
       return { ...state, currIndex: state.currIndex + 1 };
+    case "newAnswer":
+      const question = state.questions.at(state.currIndex);
+
+      return {
+        ...state,
+        answer: action.payload,
+        score:
+          action.payload === question.correctOption
+            ? state.score + question.points
+            : state.score,
+      };
     default:
       throw new Error("Action unknown");
   }
 }
 
 function App() {
-  const [{ currIndex, status, questions }, dispatch] = useReducer(
-    reducer,
-    initialState
-  );
+  const [{ currIndex, status, questions, answer, score }, dispatch] =
+    useReducer(reducer, initialState);
   const numQuestions = questions.length;
 
   useEffect(() => {
@@ -66,7 +77,12 @@ function App() {
           <StartScreen numQuestions={numQuestions} dispatch={dispatch} />
         )}
         {status === "active" && (
-          <Question currQuestion={questions.at(currIndex)} />
+          <Question
+            dispatch={dispatch}
+            answer={answer}
+            score={score}
+            currQuestion={questions.at(currIndex)}
+          />
         )}
       </Main>
       <button onClick={() => dispatch({ type: "nextQuestion" })}>Next</button>

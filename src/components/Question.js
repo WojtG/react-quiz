@@ -1,10 +1,15 @@
 import Options from "./Options";
 
-function Question({ currQuestion }) {
+function Question({ currQuestion, dispatch, answer, score }) {
   return (
     <div>
       <h4>{currQuestion.question}</h4>
-      <Options options={currQuestion.options} />
+      <Options
+        answer={answer}
+        score={score}
+        dispatch={dispatch}
+        currQuestion={currQuestion}
+      />
     </div>
   );
 }
