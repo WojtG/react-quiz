@@ -26,7 +26,7 @@ function reducer(state, action) {
     case "error":
       return { ...state, status: "error" };
     case "reset":
-      return initialState;
+      return { ...initialState, status: "active", questions: state.questions };
     case "start":
       return { ...state, status: "active" };
     case "nextQuestion":
@@ -48,6 +48,7 @@ function reducer(state, action) {
         highScore:
           state.score > state.highScore ? state.score : state.highScore,
       };
+
     default:
       throw new Error("Action unknown");
   }
@@ -72,7 +73,6 @@ function App() {
   useEffect(() => {
     async function fetchQuestions() {
       try {
-        dispatch({ type: "reset" });
         const response = await fetch("http://localhost:9000/questions");
 
         if (!response.ok) throw new Error("Whoops something went wrong");
@@ -126,6 +126,7 @@ function App() {
         )}
         {status === "finished" && (
           <FinishScreen
+            dispatch={dispatch}
             highScore={highScore}
             score={score}
             maxPoints={maxPoints}
