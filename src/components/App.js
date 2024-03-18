@@ -16,6 +16,7 @@ const initialState = {
   currIndex: 0,
   answer: null,
   score: 0,
+  highScore: getLocalStorageHighScore(),
 };
 
 function reducer(state, action) {
@@ -41,14 +42,29 @@ function reducer(state, action) {
             : state.score,
       };
     case "end":
-      return { ...state, status: "finished" };
+      return {
+        ...state,
+        status: "finished",
+        highScore:
+          state.score > state.highScore ? state.score : state.highScore,
+      };
     default:
       throw new Error("Action unknown");
   }
 }
 
+function setLocalStorageHigscore(highScore) {
+  localStorage.setItem("hScore", JSON.stringify(highScore));
+}
+
+function getLocalStorageHighScore() {
+  const response = JSON.parse(localStorage.getItem("hScore"));
+  const data = response ? response : 0;
+  return data;
+}
+
 function App() {
-  const [{ currIndex, status, questions, answer, score }, dispatch] =
+  const [{ currIndex, status, questions, answer, score, highScore }, dispatch] =
     useReducer(reducer, initialState);
   const numQuestions = questions.length;
   const maxPoints = questions.reduce((acc, curr) => acc + curr.points, 0);
@@ -71,6 +87,8 @@ function App() {
 
     fetchQuestions();
   }, []);
+
+  useEffect(() => setLocalStorageHigscore(highScore), [highScore]);
 
   return (
     <div className="app">
@@ -101,12 +119,17 @@ function App() {
                 currIndex={currIndex}
                 numQuestions={numQuestions}
                 dispatch={dispatch}
+                setLocalStorageHigscore={setLocalStorageHigscore}
               />
             )}
           </>
         )}
         {status === "finished" && (
-          <FinishScreen score={score} maxPoints={maxPoints} />
+          <FinishScreen
+            highScore={highScore}
+            score={score}
+            maxPoints={maxPoints}
+          />
         )}
       </Main>
     </div>
