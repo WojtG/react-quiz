@@ -26,7 +26,7 @@ function reducer(state, action) {
     case "error":
       return { ...state, status: "error" };
     case "reset":
-      return { ...initialState, status: "active", questions: state.questions };
+      return { ...initialState, status: "ready", questions: state.questions };
     case "start":
       return { ...state, status: "active" };
     case "nextQuestion":
