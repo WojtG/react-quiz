@@ -1,10 +1,13 @@
-function NextButton({ dispatch }) {
+function NextButton({ dispatch, numQuestions, currIndex }) {
+  const isLastQuetion = numQuestions - 1 === currIndex;
   return (
     <button
       className="btn btn-ui"
-      onClick={() => dispatch({ type: "nextQuestion" })}
+      onClick={() =>
+        dispatch(isLastQuetion ? { type: "end" } : { type: "nextQuestion" })
+      }
     >
-      Next
+      {isLastQuetion ? "Finish" : " Next"}
     </button>
   );
 }
